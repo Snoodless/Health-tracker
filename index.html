@@ -206,7 +206,40 @@ input:focus,select:focus{box-shadow:0 0 0 4px var(--glow)}
  <div class='card'><h2>История</h2><div id='sl'></div></div>
 </section>
 
+<section id='t-sleep' class='hide'>
+ <div class='card'>
+  <div class='stats'><div><b id='slAvg'>—</b><span>среднее за 7 дн., ч</span></div><div><b id='slBed'>—</b><span>обычно ложитесь</span></div><div><b id='slWake'>—</b><span>обычно встаёте</span></div></div>
+ </div>
+ <div class='card'><h2>Записать сон</h2>
+  <div class='row'><div><label>Дата пробуждения</label><input type='date' id='sld'></div><div><label>Цель, часов сна</label><input type='number' id='slg' step='0.5' inputmode='decimal' onchange='slGoal()'></div></div>
+  <div class='row' style='margin-top:10px'><div><label>Лёг(ла) спать</label><input type='time' id='slb' value='23:00'></div><div><label>Проснулся(ась)</label><input type='time' id='slw' value='07:00'></div></div>
+  <button style='width:100%;margin-top:10px' onclick='slSave()'>Сохранить</button>
+  <div class='mu' id='slM' style='margin-top:8px'></div>
+ </div>
+ <div class='card'><h2>Анализ сна</h2><div id='slAn'></div></div>
+ <div class='card'><h2>Динамика, часов сна</h2><div id='slCh'></div></div>
+ <div class='card'><h2>История</h2><div id='slL'></div></div>
+</section>
+
 <section id='t-food' class='hide'>
+ <div class='seg' id='fseg' style='margin-bottom:14px'><button class='on' onclick='fsub(0)'>Дневник</button><button onclick='fsub(1)'>Рецепты</button></div>
+ <div id='fRec' class='fhid'>
+  <div class='card'><h2>Новый рецепт</h2>
+   <label>Название</label><input id='rcn' placeholder='например, борщ'>
+   <div class='row' style='margin-top:10px'><div><label>Порций в рецепте</label><input type='number' id='rcp' value='1' step='0.5' inputmode='decimal' oninput='rdraftR()'></div><div></div></div>
+   <label style='margin-top:10px'>Ингредиент</label><input id='rq' oninput='rsearch()' placeholder='поиск продукта'>
+   <div id='rres'></div>
+   <div class='row' style='margin-top:10px'><div><label>Граммы</label><input type='number' id='rg' value='100' inputmode='numeric'></div><div style='align-self:end'><button style='width:100%;height:46px' onclick='radd()'>Добавить ингредиент</button></div></div>
+   <div id='rdr' style='margin-top:10px'></div>
+   <button style='width:100%;margin-top:10px' onclick='rsave()'>Сохранить рецепт</button>
+   <div class='mu' id='rcM' style='margin-top:8px'></div>
+  </div>
+  <div class='card'><h2>Мои рецепты</h2>
+   <label>В какой приём пищи добавлять</label><select id='rm'><option value='b'>Завтрак</option><option value='l'>Обед</option><option value='d'>Ужин</option><option value='s'>Перекус</option></select>
+   <div id='rlist' style='margin-top:6px'></div>
+   <div class='mu' id='rlM' style='margin-top:8px'></div>
+  </div>
+ </div>
  <div class='card'>
   <div class='row'><div><label>Дата</label><input type='date' id='fdt' onchange='fr()'></div><div><label>Цель, ккал</label><input type='number' id='fgoal' inputmode='numeric' onchange='fgoalSet()'></div></div>
   <div style='margin-top:12px;font-size:34px;font-weight:700'><span id='fKc'>0</span> <span class='mu' style='font-size:16px'>/ <span id='fGl'>2000</span> ккал</span></div>
@@ -221,6 +254,12 @@ input:focus,select:focus{box-shadow:0 0 0 4px var(--glow)}
   <div id='fres'></div>
   <div class='row' style='margin-top:10px'><div><label>Граммы</label><input type='number' id='fg' value='100' inputmode='numeric' oninput='fcalc()'></div><div style='align-self:end'><button style='width:100%;height:46px' onclick='fadd()'>Добавить</button></div></div>
   <div class='mu' id='fprev' style='margin-top:8px'></div>
+ </div>
+ <div class='card' id='bcBox'>
+  <h2>🔎 Штрихкод</h2>
+  <div class='row'><div><label>Номер штрихкода</label><input id='bcv' type='number' inputmode='numeric' placeholder='4600000000000'></div><div style='align-self:end'><button style='width:100%;height:46px' onclick='bcFind()'>Найти</button></div></div>
+  <div class='row' style='margin-top:10px'><button class='sec' onclick='bcScan()'>📷 Сканировать</button><label class='ex' style='justify-content:center;cursor:pointer;margin:0;background:var(--soft);color:var(--ac);font-weight:600'>Фото штрихкода<input type='file' accept='image/*' capture='environment' onchange='bcPhoto(this)' style='display:none'></label></div>
+  <div class='mu' id='bcMsg' style='margin-top:8px'>Товар ищется в базе Open Food Facts. Найденное сохраняется в «Свой продукт».</div>
  </div>
  <div class='card' id='phBox' style='display:none'>
   <h2>📷 Добавить по фото</h2>
@@ -256,6 +295,11 @@ input:focus,select:focus{box-shadow:0 0 0 4px var(--glow)}
  <div class='card'><h2>Цветовая тема</h2><div class='sw' id='sw'></div></div>
  <div class='card'><h2>Язык</h2><select id='cfL' onchange='cfSet()'><option value='ru'>Русский</option><option value='en'>English</option></select></div>
  <div class='card'><h2>Единицы измерения</h2><select id='cfU' onchange='cfSet()'><option value='metric'>Метрические (кг, см, мл, км)</option><option value='imp'>Имперские (фунты, дюймы, унции, мили)</option></select></div>
+ <div class='card'><h2>Итог недели в Telegram</h2>
+  <label class='ex'><input type='checkbox' id='cfDg' onchange='dgSet()'><span><b>Присылать итоги недели</b><small>По воскресеньям вечером бот пришлёт вес, отжимания, шаги, воду и сон. Нужен Telegram с настроенным Worker. Команда /week в чате покажет итоги в любой момент.</small></span></label>
+  <button class='sec' style='width:100%;margin-top:10px' onclick='dgShow()'>Показать итоги сейчас</button>
+  <div class='mu' id='dgOut' style='white-space:pre-wrap;margin-top:8px'></div>
+ </div>
  <div class='card'><h2>Резервная копия</h2>
   <div class='mu' style='margin-bottom:8px'>Чтобы перенести данные на другое устройство или в новую версию приложения: нажмите «Скопировать данные», откройте новую версию, вставьте текст в поле и нажмите «Загрузить из поля».</div>
   <textarea id='bk' style='width:100%;height:90px;margin-bottom:10px;border:1.5px solid var(--bd);border-radius:14px;padding:10px;background:var(--card);color:var(--tx);font-size:13px'></textarea>
@@ -267,7 +311,7 @@ input:focus,select:focus{box-shadow:0 0 0 4px var(--glow)}
 <section id="t-chart" class="hide">
  <div class="card">
   <label>Показатель</label>
-  <select id="ct" onchange="chart()"><option value="w">Вес, кг</option><option value="p">Отжимания, макс. за подход</option><option value="s">Шаги</option><option value="v">Вода, мл</option><option value="c">Калории, ккал</option></select>
+  <select id="ct" onchange="chart()"><option value="w">Вес, кг</option><option value="p">Отжимания, макс. за подход</option><option value="s">Шаги</option><option value="v">Вода, мл</option><option value="c">Калории, ккал</option><option value="sl">Сон, часов</option></select>
   <div id="ch" style="margin-top:10px"></div>
  </div>
  <div class="card"><h2>Тренировки</h2><div id="tl"></div></div>
@@ -294,6 +338,7 @@ input:focus,select:focus{box-shadow:0 0 0 4px var(--glow)}
  <button data-t="water"><i>💧</i>Вода</button>
  <button data-t="food"><i>🍎</i>Питание</button>
  <button data-t="steps"><i>👟</i>Шаги</button>
+ <button data-t="sleep"><i>😴</i>Сон</button>
  <button data-t="chart"><i>📈</i>Графики</button>
  <button data-t="report"><i>📋</i>Отчёт</button>
  <button data-t="settings"><i>⚙️</i>Настройки</button>
@@ -375,7 +420,7 @@ function render(){
 
 document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){
  document.querySelectorAll("nav button").forEach(function(x){x.classList.toggle("on",x===b);});
- ["weight","train","water","food","steps","chart","report","settings"].forEach(function(t){$("t-"+t).classList.toggle("hide",t!==b.dataset.t);});
+ ["weight","train","water","food","steps","sleep","chart","report","settings"].forEach(function(t){$("t-"+t).classList.toggle("hide",t!==b.dataset.t);});
  window.scrollTo(0,0);};});
 var tm={left:60,total:60,run:false,iv:null,end:0};
 function fmt(s){return Math.floor(s/60)+":"+("0"+s%60).slice(-2);}
@@ -652,7 +697,7 @@ function rep(){
  if(wk.length){var vs=wk.map(wSum);r3.push(['Дней с данными',wk.length],['В день',fv(sum(vs)/vs.length)+' '+uv()],['Всего',fv(sum(vs))+' '+uv()],['Дней с выполненной нормой',vs.filter(function(v){return v>=S.wt.goal;}).length]);}
  var sk=Object.keys(S.st.log).filter(function(d){return inP(d);}),r4=[];
  if(sk.length){var sv=sk.map(function(k){return S.st.log[k];}),tt=sum(sv);r4.push(['Дней с данными',sk.length],['В день',Math.round(tt/sv.length)],['Рекорд',Math.max.apply(null,sv)],['Всего',tt],['Дистанция',f1(dk(tt*0.0007))+' '+ud()],['Дней с выполненной целью',sv.filter(function(v){return v>=S.st.goal;}).length]);}
- blk('Вес',r);blk('Тренировки',r2);blk('Вода',r3);blk('Шаги',r4);$('rpB').innerHTML=out;
+ blk('Вес',r);blk('Тренировки',r2);blk('Вода',r3);blk('Шаги',r4);blk('Сон',slRows(inP));$('rpB').innerHTML=out;
 }
 function copyRep(){var t=$('rpB').innerText,m=$('rpM'),bad='Не удалось скопировать. Выделите текст вручную.';try{navigator.clipboard.writeText(t).then(function(){m.textContent='Скопировано';}).catch(function(){m.textContent=bad;});}catch(e){m.textContent=bad;}}
 var IMPM={'сейчас, кг':'сейчас, фунты','изменение, кг':'изменение, фунты','Вес, кг':'Вес, фунты','Рост, см':'Рост, дюймы','Цель, кг (необязательно)':'Цель, фунты (необязательно)','Норма, мл':'Норма, унции','мл':'унц.','≈ км сегодня':'≈ миль сегодня','Вода, мл':'Вода, унции'};
@@ -735,7 +780,7 @@ function fr(){
  $('fKc').textContent=Math.round(t.k);$('fGl').textContent=g;$('fbar').style.width=Math.min(100,t.k/g*100)+'%';
  $('fLeft').textContent=t.k<=g?'Осталось '+Math.round(g-t.k)+' ккал':'Превышение '+Math.round(t.k-g)+' ккал';
  $('fP').textContent=Math.round(t.p);$('fF').textContent=Math.round(t.f);$('fC').textContent=Math.round(t.c);$('fgoal').value=g;
- $('fl').innerHTML=MEALS.map(function(m){var es=fday(d).filter(function(e){return e.m===m[0];}),s=es.reduce(function(a,e){return a+e.k;},0);return `<div class='card'><h2>${m[2]} ${m[1]}<span class='mu' style='float:right'>${Math.round(s)} ккал</span></h2>`+(es.length?es.map(function(e){return `<div class='li'><span>${esc(e.n)}${e.g?' · '+e.g+' г':''}</span><span><b>${Math.round(e.k)} ккал</b><button class='g' data-i='${e.id}' onclick='fdel(+this.dataset.i)'>✕</button></span></div>`;}).join(''):`<div class='mu'>Пока пусто</div>`)+`</div>`;}).join('');
+ $('fl').innerHTML=MEALS.map(function(m){var es=fday(d).filter(function(e){return e.m===m[0];}),s=es.reduce(function(a,e){return a+e.k;},0);return `<div class='card'><h2>${m[2]} ${m[1]}<span class='mu' style='float:right'>${Math.round(s)} ккал</span></h2>`+(es.length?es.map(function(e){return `<div class='li'><span>${esc(e.n)}${e.g?' · '+e.g+' г':''}</span><span><b>${Math.round(e.k)} ккал</b><button class='g' data-i='${e.id}' onclick='fdel(+this.dataset.i)'>✕</button></span></div>`;}).join(''):`<div class='mu'>Пока пусто</div>`)+`<button class='sec' style='width:100%;margin-top:8px;height:38px' onclick="fcopy('${m[0]}')">📋 Скопировать со вчера</button></div>`;}).join('');
 }
 function phPick(inp){var f=inp.files&&inp.files[0];if(!f||!phS)return;$('phMsg').textContent='Анализирую фото…';$('phRes').innerHTML='';var img=new Image(),url=URL.createObjectURL(f);img.onload=function(){var s=Math.min(1,1024/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);c.toBlob(function(b){phAsk(b);},'image/jpeg',0.85);};img.onerror=function(){$('phMsg').textContent='Не удалось открыть фото';};img.src=url;inp.value='';}
 function phAsk(b){var pr=`Ты нутрициолог. На фото еда. Определи все блюда и продукты на фото, оцени вес каждой порции в граммах, калорийность и БЖУ для всей этой порции (не на 100 г). Названия по-русски, коротко. Если еды на фото нет, верни пустой список. Верни только JSON такого вида: {"items":[{"name":"...","grams":0,"kcal":0,"protein":0,"fat":0,"carbs":0}],"note":"одно предложение о том, насколько оценка надёжна"}`;
@@ -777,6 +822,188 @@ function rxOld(){
  $('sl').innerHTML=ks.length?ks.slice().reverse().slice(0,30).map(function(k){return `<div class='li'><span>${fd(k)}</span><span><b>${S.st.log[k]}</b> шагов<button class='g' data-k='${k}' onclick='delSt(this.dataset.k)'>✕</button></span></div>`;}).join(''):"<div class='mu'>Пока нет записей.</div>";
  if(!$('sd').value)$('sd').value=d;
 }
+/* ===== v3: сон, рецепты, штрихкод, прогноз, итоги недели ===== */
+(function(){var st=document.createElement('style');st.textContent='.fhid{display:none!important}';document.head.appendChild(st);})();
+S.sl=S.sl||{goal:8,log:{}};S.nu.rec=S.nu.rec||[];S.cfg=S.cfg||{};
+function notify(t){try{var w=window.Telegram&&window.Telegram.WebApp;if(w&&w.initData&&w.showAlert){w.showAlert(t);return;}}catch(e){}alert(t);}
+function slx(){if(!S.sl)S.sl={};if(!S.sl.log)S.sl.log={};if(!(S.sl.goal>0))S.sl.goal=8;return S.sl;}
+function rcs(){if(!S.nu.rec)S.nu.rec=[];return S.nu.rec;}
+function addDays(d,n){var t=new Date(d+'T12:00:00Z');t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10);}
+function p2(n){return(n<10?'0':'')+n;}
+function fmtM(m){m=((Math.round(m)%1440)+1440)%1440;return p2(Math.floor(m/60))+':'+p2(m%60);}
+function slAvg(a){var s=0;a.forEach(function(x){s+=x;});return a.length?s/a.length:0;}
+function slSd(a){if(a.length<2)return 0;var m=slAvg(a);return Math.sqrt(slAvg(a.map(function(x){return(x-m)*(x-m);})));}
+function slDur(e){var d=mins(e.w)-mins(e.b);if(d<=0)d+=1440;return d/60;}
+function bedM(b){var m=mins(b);return m<720?m+1440:m;}
+function slStats(days){var t=today(),a=[];for(var i=days-1;i>=0;i--){var d=addDays(t,-i),e=slx().log[d];if(e)a.push({d:d,h:slDur(e),b:bedM(e.b),w:mins(e.w)});}return a;}
+
+/* ---------- Сон ---------- */
+function slSave(){var d=$('sld').value||today(),b=$('slb').value,w=$('slw').value,m=$('slM');if(!b||!w){m.textContent='Укажите время отхода ко сну и пробуждения';return;}var e={b:b,w:w},h=slDur(e);if(h>16){m.textContent='Получилось больше 16 часов, проверьте время';return;}slx().log[d]=e;m.textContent='Сохранено: '+h.toFixed(1)+' ч';save();sleepR();}
+function slDel(d){delete slx().log[d];save();sleepR();}
+function slGoal(){var g=parseFloat($('slg').value);if(g>=4&&g<=14){slx().goal=g;save();sleepR();}}
+function slAnalyze(){
+ var s=slx(),a=slStats(14),a7=slStats(7),o=[];
+ if(a.length<3)return "<div class='mu'>Нужно минимум 3 записи за последние 2 недели, чтобы сделать выводы.</div>";
+ var h=slAvg(a.map(function(x){return x.h;}));
+ var v=h<6?['🔴','Выраженный недосып']:h<7?['🟠','Небольшой недосып']:h<=9?['🟢','В норме']:['🟡','Сна больше обычной нормы'];
+ o.push('<b>'+v[0]+' '+v[1]+'.</b> В среднем '+h.toFixed(1)+' ч за ночь (ориентир для взрослых 7–9 ч).');
+ if(a7.length>=3){var debt=0;a7.forEach(function(x){if(x.h<s.goal)debt+=s.goal-x.h;});o.push(debt>0.4?'Недосып относительно вашей цели ('+s.goal+' ч) за последние 7 дней: '+debt.toFixed(1)+' ч.':'За последние 7 дней вы укладываетесь в свою цель ('+s.goal+' ч).');}
+ o.push('Ночей короче 7 ч: '+a.filter(function(x){return x.h<7;}).length+' из '+a.length+'.');
+ var sd2=slSd(a.map(function(x){return x.b;}));
+ o.push(sd2<45?'Режим стабильный: время отхода ко сну меняется в пределах ±'+Math.round(sd2)+' мин.':sd2<90?'Небольшой разброс времени отхода ко сну (±'+Math.round(sd2)+' мин). Стабильное время помогает высыпаться.':'Режим нерегулярный: время отхода ко сну «плавает» (±'+Math.round(sd2)+' мин). Попробуйте ложиться в одно время, в пределах 30 минут.');
+ var we=[],wd=[];a.forEach(function(x){var g=new Date(x.d+'T12:00:00Z').getUTCDay();(g===0||g===6?we:wd).push(x.h);});
+ if(we.length>=2&&wd.length>=2){var df=slAvg(we)-slAvg(wd);if(df>=1.5)o.push('В выходные вы спите на '+df.toFixed(1)+' ч дольше, чем в будни. Так организм компенсирует недосып: добавьте сна в будни.');}
+ o.push("<span class='mu'>Это ориентиры для здорового взрослого, а не медицинская рекомендация. При постоянной усталости или проблемах со сном обратитесь к врачу.</span>");
+ return o.map(function(x){return '<p style="margin:0 0 8px">'+x+'</p>';}).join('');
+}
+function sleepR(){
+ var s=slx(),a7=slStats(7);
+ if(!$('sld').value)$('sld').value=today();
+ $('slg').value=s.goal;
+ $('slAvg').textContent=a7.length?f1(slAvg(a7.map(function(x){return x.h;}))):'—';
+ $('slBed').textContent=a7.length?fmtM(slAvg(a7.map(function(x){return x.b;}))):'—';
+ $('slWake').textContent=a7.length?fmtM(slAvg(a7.map(function(x){return x.w;}))):'—';
+ $('slAn').innerHTML=slAnalyze();
+ $('slCh').innerHTML=line(slStats(30).map(function(x){return{x:x.d,y:+x.h.toFixed(2)};}),s.goal);
+ var ks=Object.keys(s.log).sort().reverse().slice(0,14);
+ $('slL').innerHTML=ks.length?ks.map(function(d){var e=s.log[d];return "<div class='li'><span>"+fd(d)+' · '+e.b+'–'+e.w+"</span><span><b>"+slDur(e).toFixed(1)+" ч</b><button class='g' data-d='"+d+"' onclick='slDel(this.dataset.d)'>✕</button></span></div>";}).join(''):"<div class='mu'>Пока нет записей.</div>";
+}
+function slRows(inP){var k=Object.keys(slx().log).filter(inP);if(!k.length)return[];var a=k.map(function(d){var e=slx().log[d];return{h:slDur(e),b:bedM(e.b),w:mins(e.w)};});return[['Ночей с данными',a.length],['В среднем, ч',f1(slAvg(a.map(function(x){return x.h;})))],['Обычно ложитесь',fmtM(slAvg(a.map(function(x){return x.b;})))],['Обычно встаёте',fmtM(slAvg(a.map(function(x){return x.w;})))],['Ночей короче 7 ч',a.filter(function(x){return x.h<7;}).length]];}
+
+/* ---------- Прогноз веса ---------- */
+function fcastInfo(){
+ var g=parseFloat(S.g);if(!(g>0)||!S.w.length)return null;
+ var last=S.w[S.w.length-1],cut=addDays(today(),-28),pts=S.w.filter(function(x){return x.d>=cut;});
+ if(pts.length<4||(new Date(last.d)-new Date(pts[0].d))<6*864e5)return{msg:'Для прогноза нужно минимум 4 замера за последние 4 недели, растянутые хотя бы на неделю.'};
+ var t0=new Date(pts[0].d+'T12:00:00Z').getTime(),n=pts.length,sx=0,sy=0,sxy=0,sxx=0;
+ pts.forEach(function(p){var x=(new Date(p.d+'T12:00:00Z').getTime()-t0)/864e5;sx+=x;sy+=p.w;sxy+=x*p.w;sxx+=x*x;});
+ var den=n*sxx-sx*sx;if(!den)return null;
+ var slope=(n*sxy-sx*sy)/den,icp=(sy-slope*sx)/n,xl=(new Date(last.d+'T12:00:00Z').getTime()-t0)/864e5,cur=icp+slope*xl,need=g-cur,r={wk:slope*7,g:g};
+ if(Math.abs(last.w-g)<0.3||(pts[0].w>g&&last.w<=g)||(pts[0].w<g&&last.w>=g)){r.done=true;return r;}
+ if(need*slope>0&&Math.abs(slope)>0.005){r.days=need/slope;r.date=addDays(last.d,Math.ceil(r.days));}
+ return r;
+}
+function fcastText(){
+ var f=fcastInfo();if(!f)return '';if(f.msg)return f.msg;
+ var u=' '+uw(),pw=(f.wk>0?'+':'−')+f1(Math.abs(wo(f.wk)))+u;
+ if(f.done)return 'Цель '+f1(wo(f.g))+u+' достигнута.';
+ if(!f.date)return 'Тренд: '+pw+' в неделю. Сейчас вес движется не к цели ('+f1(wo(f.g))+u+').';
+ if(f.days>730)return 'Тренд: '+pw+' в неделю. При таком темпе до цели больше двух лет.';
+ var w=f.days/7;
+ return 'Тренд: '+pw+' в неделю (по замерам за 4 недели). Цель '+f1(wo(f.g))+u+' примерно через '+(w<1.5?Math.max(1,Math.round(f.days))+' дн.':Math.round(w)+' нед.')+' (≈ '+fd(f.date)+').';
+}
+function fcastR(){
+ var el=$('fcast');
+ if(!el){var c=$('sCur').closest('.card');el=document.createElement('div');el.id='fcast';el.className='mu';el.style.marginTop='10px';c.appendChild(el);}
+ var t=fcastText();el.textContent=t?'🔮 '+t:(S.w.length&&!(parseFloat(S.g)>0)?'🔮 Укажите цель, чтобы увидеть прогноз.':'');
+}
+
+/* ---------- Итоги недели ---------- */
+function dgDays(a,b){var r=[],d=a;while(d<=b){r.push(d);d=addDays(d,1);}return r;}
+function digestText(){
+ var t=today(),d0=addDays(t,-6),p1=addDays(t,-7),p0=addDays(t,-13),L=[],cur=dgDays(d0,t),prv=dgDays(p0,p1),u=' '+uw();
+ L.push('📊 Итоги недели ('+fd(d0)+' – '+fd(t)+')');
+ var ws=S.w.filter(function(x){return x.d<=t;}),end=ws[ws.length-1],base=null;
+ ws.forEach(function(x){if(x.d<=p1)base=x;});
+ if(!base){var iw=ws.filter(function(x){return x.d>=d0;});if(iw.length>1)base=iw[0];}
+ if(end&&end.d>=d0){
+  var s='⚖️ Вес: '+f1(wo(end.w))+u;
+  if(base&&base!==end){var df=wo(end.w)-wo(base.w);s+=Math.abs(df)<0.05?' (без изменений за неделю)':' ('+(df>0?'+':'−')+f1(Math.abs(df))+u+' за неделю)';}
+  L.push(s);
+  if(S.g>0)L.push(Math.abs(end.w-S.g)<0.3?'🎯 Цель достигнута':'🎯 До цели: '+f1(Math.abs(wo(end.w-S.g)))+u);
+ }else L.push('⚖️ Вес: на этой неделе замеров не было');
+ var fc=fcastText();if(fc&&S.w.length)L.push('🔮 '+fc);
+ function pm(a){var m=0;S.t.forEach(function(x){if(a.indexOf(x.d)>=0&&x.p>m)m=x.p;});return m;}
+ function wc(a){return S.t.filter(function(x){return a.indexOf(x.d)>=0;}).length;}
+ var pu=pm(cur),pp=pm(prv);
+ if(pu){var dd=pu-pp;L.push('💪 Отжимания: максимум '+pu+(pp?' ('+(dd>0?'+'+dd:dd<0?'−'+Math.abs(dd):'без изменений')+' к прошлой неделе)':''));}
+ else L.push('💪 Отжимания: на неделе не записаны'+(pp?' (на прошлой было '+pp+')':''));
+ L.push('🏋️ Тренировок: '+wc(cur)+' (прошлая неделя: '+wc(prv)+')');
+ function stv(a){return a.filter(function(d){return S.st.log[d]>0;}).map(function(d){return S.st.log[d];});}
+ var sc=stv(cur),sp=stv(prv);
+ if(sc.length){var av=Math.round(slAvg(sc)),s2='👟 Шаги: в среднем '+av+' в день';if(sp.length){var dv=av-Math.round(slAvg(sp));s2+=' ('+(dv>0?'+':dv<0?'−':'±')+Math.abs(dv)+' к прошлой неделе)';}s2+='. Цель '+S.st.goal+' достигнута в '+sc.filter(function(v){return v>=S.st.goal;}).length+' из 7 дней';L.push(s2);}
+ else L.push('👟 Шаги: данных нет');
+ var wv=cur.filter(function(d){return wSum(d)>0;});
+ if(wv.length)L.push('💧 Вода: норма выполнена в '+cur.filter(function(d){return wSum(d)>=S.wt.goal;}).length+' из 7 дней, в среднем '+fv(slAvg(wv.map(wSum)))+' '+uv()+' в день');
+ else L.push('💧 Вода: данных нет');
+ var nk=cur.filter(function(d){return fday(d).length;});
+ if(nk.length)L.push('🍎 Питание: в среднем '+Math.round(slAvg(nk.map(function(d){return ftot(d).k;})))+' ккал в день (цель '+S.nu.goal+'), записи за '+nk.length+' дн.');
+ var sl7=slStats(7);
+ if(sl7.length)L.push('😴 Сон: в среднем '+f1(slAvg(sl7.map(function(x){return x.h;})))+' ч, ночей короче 7 ч: '+sl7.filter(function(x){return x.h<7;}).length);
+ return L.join('\n');
+}
+function dgSet(){S.cfg.dg=$('cfDg').checked;save();}
+function dgShow(){$('dgOut').textContent=digestText();}
+function dgR(){var c=$('cfDg');if(c)c.checked=S.cfg.dg!==false;}
+
+/* ---------- Копирование приёма пищи ---------- */
+function fcopy(m){var d=fdate(),src=fday(addDays(d,-1)).filter(function(e){return e.m===m;});if(!src.length){notify('Вчера в этом приёме пищи ничего нет');return;}var n=0;src.forEach(function(e){var c=JSON.parse(JSON.stringify(e));c.id=Date.now()+n++;fpush(c);});save();fr();}
+
+/* ---------- Рецепты ---------- */
+var rdraft=[],rsel=null;
+function fsub(i){var sec=$('t-food');Array.prototype.forEach.call(sec.children,function(c){if(c.id==='fseg')return;if(c.id==='fRec')c.classList.toggle('fhid',!i);else c.classList.toggle('fhid',!!i);});var b=$('fseg').children;b[0].classList.toggle('on',!i);b[1].classList.toggle('on',!!i);if(i)recR();}
+function rtot(items){var t={k:0,p:0,f:0,c:0};items.forEach(function(x){t.k+=x.k;t.p+=x.p;t.f+=x.f;t.c+=x.c;});return t;}
+function rsearch(){var q=$('rq').value.trim().toLowerCase(),box=$('rres');if(!q){box.innerHTML='';return;}var r=allF().filter(function(x){return x.n.toLowerCase().indexOf(q)>=0;}).slice(0,6);box.innerHTML=r.length?r.map(function(x){return `<div class='ex' data-n='${esc(x.n)}' onclick='rpick(this.dataset.n)' style='cursor:pointer'><span style='flex:1'><b>${esc(x.n)}</b><small>${x.k} ккал на 100 г</small></span></div>`;}).join(''):`<div class='mu'>Не найдено. Свой продукт можно добавить в разделе «Дневник».</div>`;}
+function rpick(n){rsel=allF().filter(function(x){return x.n===n;})[0]||null;$('rq').value=n;$('rres').innerHTML='';}
+function radd(){var g=+$('rg').value;if(!rsel||!(g>0)){$('rcM').textContent='Выберите продукт и граммы';return;}var q=g/100;rdraft.push({n:rsel.n,g:g,k:rsel.k*q,p:rsel.p*q,f:rsel.f*q,c:rsel.c*q});rsel=null;$('rq').value='';$('rcM').textContent='';rdraftR();}
+function rdel(i){rdraft.splice(i,1);rdraftR();}
+function rdraftR(){var t=rtot(rdraft),por=+$('rcp').value||1;$('rdr').innerHTML=rdraft.length?rdraft.map(function(x,i){return `<div class='li'><span>${esc(x.n)} · ${Math.round(x.g)} г</span><span><b>${Math.round(x.k)} ккал</b><button class='g' data-i='${i}' onclick='rdel(+this.dataset.i)'>✕</button></span></div>`;}).join('')+`<div class='mu' style='margin-top:8px'>Всего ${Math.round(t.k)} ккал · на порцию ${Math.round(t.k/por)} ккал</div>`:`<div class='mu'>Ингредиенты ещё не добавлены</div>`;}
+function rsave(){var n=$('rcn').value.trim(),por=+$('rcp').value;if(!n||!rdraft.length||!(por>0)){$('rcM').textContent='Укажите название, число порций и хотя бы один ингредиент';return;}rcs().unshift({id:Date.now(),n:n,por:por,items:rdraft});rdraft=[];$('rcn').value='';$('rcp').value=1;$('rcM').textContent='Рецепт сохранён';save();recR();}
+function recR(){var b=$('rlist');if(!b)return;rdraftR();var rs=rcs();b.innerHTML=rs.length?rs.map(function(r){var t=rtot(r.items),p=r.por||1;return `<div style='border-top:1px solid var(--bd);padding:10px 0'><div style='display:flex;justify-content:space-between;align-items:center'><b>${esc(r.n)}</b><button class='g' data-i='${r.id}' onclick='rdrop(+this.dataset.i)'>✕</button></div><div class='mu'>Порция: ${Math.round(t.k/p)} ккал · Б ${r1(t.p/p)} · Ж ${r1(t.f/p)} · У ${r1(t.c/p)} (порций в рецепте: ${p})</div><div class='row' style='margin-top:8px'><div><label>Съедено порций</label><input type='number' id='rpp${r.id}' value='1' step='0.5' inputmode='decimal'></div><div style='align-self:end'><button style='width:100%;height:46px' data-i='${r.id}' onclick='rdiary(+this.dataset.i)'>В дневник</button></div></div></div>`;}).join(''):`<div class='mu'>Рецептов пока нет</div>`;}
+function rdiary(id){var r=rcs().filter(function(x){return x.id===id;})[0];if(!r)return;var por=+$('rpp'+id).value||1,t=rtot(r.items),q=por/(r.por||1);fpush({id:Date.now(),m:$('rm').value,n:r.n+' ('+por+' порц.)',g:0,k:Math.round(t.k*q),p:r1(t.p*q),f:r1(t.f*q),c:r1(t.c*q)});save();fr();$('rlM').textContent='Добавлено в дневник на '+fd(fdate());}
+function rdrop(id){S.nu.rec=rcs().filter(function(x){return x.id!==id;});save();recR();}
+
+/* ---------- Штрихкод ---------- */
+var bcStream=null,bcTimer=null,bcZ=null;
+function bcM(t){$('bcMsg').textContent=t;}
+function bcFind(code){
+ code=String(typeof code==='string'||typeof code==='number'?code:$('bcv').value).replace(/\D/g,'');
+ if(code.length<8){bcM('Введите штрихкод (8–13 цифр)');return;}
+ bcM('Ищу…');
+ fetch('https://world.openfoodfacts.org/api/v2/product/'+code+'.json?fields=product_name,brands,nutriments').then(function(r){return r.json();}).then(function(j){
+  if(!j||j.status!==1||!j.product){bcM('Товар не найден в базе Open Food Facts. Добавьте его вручную в «Свой продукт», дальше он будет находиться поиском.');return;}
+  var p=j.product,n=p.nutriments||{},k=n['energy-kcal_100g'];
+  if(k==null&&n['energy_100g']!=null)k=n['energy_100g']/4.184;
+  var nm=(p.product_name||'Без названия')+(p.brands?' ('+String(p.brands).split(',')[0]+')':'');
+  var it={n:nm,k:Math.round(+k||0),p:r1(+n.proteins_100g||0),f:r1(+n.fat_100g||0),c:r1(+n.carbohydrates_100g||0)};
+  if(!S.nu.my.some(function(x){return x.n===it.n;})){S.nu.my.unshift(it);save();}
+  fsel=it;$('fq').value=it.n;$('fres').innerHTML='';fcalc();
+  bcM('Найдено: '+it.n+' ('+it.k+' ккал на 100 г). Укажите граммы и нажмите «Добавить».'+(it.k?'':' В базе нет калорий для этого товара, проверьте данные.'));
+ }).catch(function(){bcM('Не удалось связаться с базой продуктов. Проверьте интернет (в версии внутри Claude поиск по штрихкоду недоступен).');});
+}
+function bcClose(){if(bcTimer){clearInterval(bcTimer);bcTimer=null;}if(bcStream){try{bcStream.getTracks().forEach(function(t){t.stop();});}catch(e){}bcStream=null;}if(bcZ){try{bcZ.reset();}catch(e){}bcZ=null;}var o=$('bcOv');if(o)o.style.display='none';}
+function bcFound(c){bcClose();$('bcv').value=c;bcFind(c);}
+function bcLoadZ(cb){if(window.ZXing){cb();return;}var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';s.onload=cb;s.onerror=function(){bcClose();bcM('Не удалось загрузить сканер. Введите номер вручную или сфотографируйте штрихкод.');};document.head.appendChild(s);}
+function bcScan(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){bcM('Камера здесь недоступна. Введите номер или сфотографируйте штрихкод.');return;}
+ var o=$('bcOv');
+ if(!o){o=document.createElement('div');o.id='bcOv';o.style.cssText='position:fixed;left:0;top:0;right:0;bottom:0;z-index:99;background:#000;display:flex;flex-direction:column';o.innerHTML="<video id='bcVid' playsinline muted autoplay style='flex:1;width:100%;object-fit:cover'></video><div style='position:absolute;left:10%;right:10%;top:50%;height:2px;background:#ff4d6d'></div><button onclick='bcClose()' style='position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;width:auto;padding:10px 16px'>Закрыть</button><div style='position:absolute;bottom:28px;left:0;right:0;text-align:center;color:#fff;font-size:14px'>Наведите камеру на штрихкод</div>";document.body.appendChild(o);}
+ o.style.display='flex';
+ var v=$('bcVid');
+ if('BarcodeDetector' in window){
+  var det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+  navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(function(s){bcStream=s;v.srcObject=s;if(v.play)v.play().catch(function(){});bcTimer=setInterval(function(){det.detect(v).then(function(r){if(r&&r.length)bcFound(r[0].rawValue);}).catch(function(){});},350);}).catch(function(){bcClose();bcM('Нет доступа к камере. Разрешите камеру или сфотографируйте штрихкод.');});
+ }else bcLoadZ(function(){
+  try{bcZ=new ZXing.BrowserMultiFormatReader();var cb=function(res){if(res)bcFound(res.getText());};
+   if(bcZ.decodeFromConstraints)bcZ.decodeFromConstraints({video:{facingMode:'environment'}},'bcVid',cb).catch(function(){bcClose();bcM('Нет доступа к камере. Разрешите камеру или сфотографируйте штрихкод.');});
+   else bcZ.decodeFromVideoDevice(null,'bcVid',cb);
+  }catch(e){bcClose();bcM('Сканер не запустился. Введите номер вручную.');}
+ });
+}
+function bcPhoto(inp){
+ var f=inp.files&&inp.files[0];if(!f)return;bcM('Читаю штрихкод…');
+ var fail=function(){bcM('Штрихкод на фото не распознан. Сфотографируйте ближе и ровнее или введите номер.');};
+ if('BarcodeDetector' in window&&window.createImageBitmap){
+  new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+  createImageBitmap(f).then(function(bm){return new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}).detect(bm);}).then(function(r){if(r&&r.length)bcFound(r[0].rawValue);else fail();}).catch(fail);
+ }else bcLoadZ(function(){var url=URL.createObjectURL(f);try{new ZXing.BrowserMultiFormatReader().decodeFromImageUrl(url).then(function(r){URL.revokeObjectURL(url);bcFound(r.getText());}).catch(function(){URL.revokeObjectURL(url);fail();});}catch(e){fail();}});
+ inp.value='';
+}
+
+/* ---------- Подключение к приложению ---------- */
+var _c2=chart;chart=function(){if($('ct').value==='sl'){$('ch').innerHTML=line(slStats(60).map(function(x){return{x:x.d,y:+x.h.toFixed(2)};}),slx().goal);return;}_c2();};
+var _r3=render;render=function(){_r3();try{fcastR();sleepR();dgR();}catch(e){}};
+
 render();
 (function(){
 var dbr=null,tmr=null,_s0=save;
@@ -840,7 +1067,7 @@ function wsync(){
  if(!W)return;
  try{
   var d=today(),c=S.wt||{},ip=imp();
-  var body={initData:tg.initData,date:d,total:wSum(d),tz:new Date().getTimezoneOffset(),on:!!c.on,every:c.every,from:c.from,to:c.to,goal:c.goal,imp:ip,lang:(S.cfg&&S.cfg.lang)||'ru',
+  var body={initData:tg.initData,date:d,total:wSum(d),tz:new Date().getTimezoneOffset(),on:!!c.on,every:c.every,from:c.from,to:c.to,goal:c.goal,imp:ip,lang:(S.cfg&&S.cfg.lang)||'ru',dg:{on:!(S.cfg&&S.cfg.dg===false),text:(typeof digestText==='function'?digestText():'')},
    presets:(ip?[8,12,16]:[200,300,500]).map(function(v){return{l:'+'+v+(ip?' oz':(S.cfg&&S.cfg.lang==='en'?' ml':' мл')),ml:ip?Math.round(vi(v)):v};})};
   fetch(W+'/sync',{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json();}).then(function(j){
    if(j&&j.pending&&j.pending.length){j.pending.forEach(function(p){(S.wt.log[p.d]=S.wt.log[p.d]||[]).push(p.ml);});save();render();}
